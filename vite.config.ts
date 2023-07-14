@@ -6,9 +6,7 @@ export default defineConfig({
   base: '/ts-library/',
   plugins: [UnoCSS()],
   resolve: {
-    alias: {
-      '@': '/src'
-    }
+    alias: { '@': '/src' }
   },
   // JSX
   esbuild: {

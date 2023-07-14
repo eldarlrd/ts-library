@@ -1,7 +1,7 @@
 {
   "name": "ts-library",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -17,6 +17,9 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "@unocss/eslint-config": "^0.53.5",
+    "@unocss/preset-attributify": "^0.53.5",
+    "@unocss/preset-typography": "^0.53.5",
+    "@unocss/preset-uno": "^0.53.5",
     "eslint": "^8.45.0",
     "eslint-config-prettier": "^8.8.0",
     "gh-pages": "^5.0.0",
