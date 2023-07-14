@@ -1,0 +1,31 @@
+{
+  "name": "ts-library",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "pretty": "prettier --write src/**/*.{ts,tsx}",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives",
+    "format": "yarn pretty && yarn lint --fix",
+    "preview": "vite preview",
+    "deploy": "yarn build && gh-pages -b deploy -m 'build: Deployment' -d dist"
+  },
+  "devDependencies": {
+    "@types/mithril": "^2.0.12",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@unocss/eslint-config": "^0.53.5",
+    "eslint": "^8.45.0",
+    "eslint-config-prettier": "^8.8.0",
+    "gh-pages": "^5.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.2",
+    "unocss": "^0.53.5",
+    "vite": "^4.4.0"
+  },
+  "dependencies": {
+    "mithril": "^2.2.2"
+  }
+}
