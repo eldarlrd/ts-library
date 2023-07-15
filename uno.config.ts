@@ -10,5 +10,10 @@ export default defineConfig({
     presetUno(),
     presetTypography(),
     presetAttributify()
-  ]
+  ],
+  content: {
+    pipeline: {
+      include: ['src/**/*.{js,ts}']
+    }
+  }
 });

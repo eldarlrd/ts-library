@@ -7,11 +7,5 @@ export default defineConfig({
   plugins: [UnoCSS()],
   resolve: {
     alias: { '@': '/src' }
-  },
-  // JSX
-  esbuild: {
-    jsx: 'transform',
-    jsxFactory: 'm',
-    jsxFragment: "'['"
   }
 });
