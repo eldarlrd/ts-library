@@ -1,7 +1,7 @@
 {
   "name": "ts-library",
   "private": true,
-  "version": "0.1.3",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,6 +11,13 @@
     "format": "yarn pretty && yarn lint --fix",
     "preview": "vite preview",
     "deploy": "yarn build && gh-pages -b deploy -m 'build: Deployment' -d dist"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "jsxSingleQuote": true,
+    "bracketSameLine": true,
+    "trailingComma": "none",
+    "arrowParens": "avoid"
   },
   "devDependencies": {
     "@types/mithril": "^2.0.12",
