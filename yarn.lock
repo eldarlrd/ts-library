@@ -532,7 +532,7 @@
     magic-string "^0.30.1"
     postcss "^8.4.25"
 
-"@unocss/preset-attributify@0.53.5", "@unocss/preset-attributify@^0.53.5":
+"@unocss/preset-attributify@0.53.5":
   version "0.53.5"
   resolved "https://registry.npmjs.org/@unocss/preset-attributify/-/preset-attributify-0.53.5.tgz#7b12598fcd3895744e17fc4277480d2a185a6f9d"
   integrity sha512-0TJD9hVUWu0T4dtdURApyFiliqbckYYGZe2PZBgUrHCypbI0zq7k3MdXFYmIuYxqDPErJVm8rO9lwMpKfTsvuA==
@@ -563,7 +563,7 @@
   dependencies:
     "@unocss/core" "0.53.5"
 
-"@unocss/preset-typography@0.53.5", "@unocss/preset-typography@^0.53.5":
+"@unocss/preset-typography@0.53.5":
   version "0.53.5"
   resolved "https://registry.npmjs.org/@unocss/preset-typography/-/preset-typography-0.53.5.tgz#03447c23f0cf6c80a8f2266abba60f14c9a702e9"
   integrity sha512-roZXiJ14wuXcpLN5YodAN1wKYlwCDJ8L/TQlUphyM487i0QbKwXAZg8dA1SWCQIl5V9Qcq/3EXAQmLnhRdwBMA==
@@ -580,7 +580,7 @@
     "@unocss/preset-mini" "0.53.5"
     "@unocss/preset-wind" "0.53.5"
 
-"@unocss/preset-web-fonts@0.53.5":
+"@unocss/preset-web-fonts@0.53.5", "@unocss/preset-web-fonts@^0.53.5":
   version "0.53.5"
   resolved "https://registry.npmjs.org/@unocss/preset-web-fonts/-/preset-web-fonts-0.53.5.tgz#1492f6a34e0a2c13c1120274dc8624cf87d8ace2"
   integrity sha512-yVkOOECyOQqahRGSefcBKtNYAUnYFqqFedGy0SBBjadPWn80vjVg7ojljKlJsgSQdrpcJ38wwWr3Oh4UWwBuQQ==
@@ -596,7 +596,7 @@
     "@unocss/core" "0.53.5"
     "@unocss/preset-mini" "0.53.5"
 
-"@unocss/reset@0.53.5":
+"@unocss/reset@0.53.5", "@unocss/reset@^0.53.5":
   version "0.53.5"
   resolved "https://registry.npmjs.org/@unocss/reset/-/reset-0.53.5.tgz#11828cb82b7d1d32d72b6c430794d5825bf739c9"
   integrity sha512-tH8K4jw76mbWA67UUHKV6zxiwOsiG+byrHoG3lz8hr+cm6OgEJ3WjNNp7dZINmr7S7ylWO6igbxGQpsAuIQZCw==

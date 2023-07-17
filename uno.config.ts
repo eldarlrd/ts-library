@@ -1,15 +1,15 @@
 import {
   defineConfig,
   presetUno,
-  presetTypography,
-  presetAttributify
+  presetWebFonts
 } from 'unocss';
 
 export default defineConfig({
   presets: [
     presetUno(),
-    presetTypography(),
-    presetAttributify()
+    presetWebFonts({
+      fonts: { main: 'Gentium Book Plus' }
+    })
   ],
   content: {
     pipeline: {
