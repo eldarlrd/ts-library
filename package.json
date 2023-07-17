@@ -1,13 +1,13 @@
 {
   "name": "ts-library",
   "private": true,
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "pretty": "prettier --write src/**/*.ts",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives",
+    "lint": "eslint src --ext ts --report-unused-disable-directives",
     "format": "yarn pretty && yarn lint --fix",
     "preview": "vite preview",
     "deploy": "yarn build && gh-pages -b deploy -m 'build: Deployment' -d dist"
