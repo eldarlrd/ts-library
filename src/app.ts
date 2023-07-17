@@ -5,12 +5,33 @@ import 'virtual:uno.css';
 import bookClosed from '@/assets/book-closed.svg';
 import trash from '@/assets/trash.svg';
 import githubLogo from '@/assets/github.svg';
-
 const githubURL: string = 'https://github.com/eldarlrd';
 
 interface VirtualDOM {
   view: () => m.Vnode;
 }
+
+interface Modal {
+  isOpen: boolean;
+  toggleOpen: () => boolean;
+  checkOutside: (target: EventTarget | null) => void;
+}
+
+const bookCreate: Modal = {
+  isOpen: false,
+  toggleOpen: () => (bookCreate.isOpen = !bookCreate.isOpen),
+  checkOutside: target => {
+    target !== null
+      ? (
+          (<unknown>(
+            ((<unknown>target) as HTMLDivElement).closest('#modal')
+          )) as HTMLDivElement[]
+        ).length
+        ? null
+        : bookCreate.toggleOpen()
+      : null;
+  }
+};
 
 export const App = (): VirtualDOM => {
   return {
@@ -50,12 +71,13 @@ export const App = (): VirtualDOM => {
             'main',
             {
               class:
-                'flex bg-slate-50 gap-6 flex-col items-center p-6 min-h-[calc(100vh-16em)] w-full'
+                'flex bg-slate-50 gap-6 flex-col items-center p-6 min-h-[calc(100vh-16.25em)] w-full'
             },
             [
               m(
                 'button',
                 {
+                  onclick: bookCreate.toggleOpen,
                   class:
                     'outline-none drop-shadow-md transition-colors active:bg-blue-700 hover:bg-blue-600 select-none bg-blue-500 text-white text-center text-lg sm:text-xl md:text-2xl font-bold rounded-xl px-3 py-2'
                 },
@@ -124,21 +146,85 @@ export const App = (): VirtualDOM => {
                 ]
               ),
               // Modal
-              m('div#overlay', {class: 'fixed inset-0 z-20 flex invisible h-full w-full items-center justify-center bg-black/75'}, [
-                m('section#modal', {class: 'scale-100 transition-transform flex flex-col items-center justify-center gap-6 rounded-md bg-stone-200 drop-shadow-2xl h-96 md:w-80'}, [
-                  m('h2', {class: 'select-none text-xl font-bold md:text-2xl'}, 'Book Details'),
-                  m('form', {class: 'flex flex-col items-center justify-center gap-6'}, [
-                    m('input#title', {class: 'px-3 py-2 rounded-md w-11/12', required: true, name: 'title', placeholder: 'Title'}),
-                    m('input#author', {class: 'px-3 py-2 rounded-md w-11/12', required: true, name: 'author', placeholder: 'Author'}),
-                    m('input#pages', {class: 'px-3 py-2 invalid:focus:accent-red-500 rounded-md w-11/12', required: true, min: 1, type: 'number', name: 'pages', placeholder: 'Pages'}),
-                    m('span', {class: 'flex gap-2'}, [
-                      m('label', {for: 'readStatus', class: 'text-lg md:text-xl select-none cursor-pointer'}, 'Have you read it?'),
-                      m('input#readStatus', {name: 'readStatus', class: 'cursor-pointer w-5 border outline-none', type: 'checkbox'})
-                    ]),
-                    m('input', {class: 'w-11/12 cursor-pointer outline-none drop-shadow-md transition-colors active:bg-blue-700 hover:bg-blue-600 select-none bg-blue-500 text-white text-center md:text-xl text-lg font-bold rounded-md px-3 py-2', name: 'submitBoom', type: 'submit', value: 'Add'})
-                  ])
-                ])
-              ])
+              m(
+                'div#overlay',
+                {
+                  onclick: bookCreate.toggleOpen,
+                  class: bookCreate.isOpen
+                    ? 'fixed inset-0 z-20 flex h-full w-full items-center justify-center bg-black/75'
+                    : 'hidden'
+                },
+                [
+                  m(
+                    'section#modal',
+                    {
+                      onclick: (e: Event) => bookCreate.checkOutside(e.target),
+                      class:
+                        'scale-100 transition-transform flex flex-col items-center justify-center gap-6 rounded-xl bg-stone-200 drop-shadow-2xl h-96 md:w-80'
+                    },
+                    [
+                      m(
+                        'h2',
+                        { class: 'select-none text-xl font-bold md:text-2xl' },
+                        'Book Details'
+                      ),
+                      m(
+                        'form',
+                        {
+                          class:
+                            'flex flex-col items-center justify-center gap-6'
+                        },
+                        [
+                          m('input#title', {
+                            class: 'px-3 py-2 rounded-xl w-11/12',
+                            required: true,
+                            name: 'title',
+                            placeholder: 'Title'
+                          }),
+                          m('input#author', {
+                            class: 'px-3 py-2 rounded-xl w-11/12',
+                            required: true,
+                            name: 'author',
+                            placeholder: 'Author'
+                          }),
+                          m('input#pages', {
+                            class:
+                              'px-3 py-2 invalid:focus:accent-red-500 rounded-xl w-11/12',
+                            required: true,
+                            min: 1,
+                            type: 'number',
+                            name: 'pages',
+                            placeholder: 'Pages'
+                          }),
+                          m('span', { class: 'flex gap-2' }, [
+                            m(
+                              'label',
+                              {
+                                for: 'readStatus',
+                                class:
+                                  'text-lg md:text-xl select-none cursor-pointer'
+                              },
+                              'Have you read it?'
+                            ),
+                            m('input#readStatus', {
+                              name: 'readStatus',
+                              class: 'cursor-pointer w-5 border outline-none',
+                              type: 'checkbox'
+                            })
+                          ]),
+                          m('input', {
+                            class:
+                              'w-11/12 cursor-pointer outline-none drop-shadow-md transition-colors active:bg-blue-700 hover:bg-blue-600 select-none bg-blue-500 text-white text-center md:text-xl text-lg font-bold rounded-xl px-3 py-2',
+                            name: 'submitBoom',
+                            type: 'submit',
+                            value: 'Add'
+                          })
+                        ]
+                      )
+                    ]
+                  )
+                ]
+              )
             ]
           ),
           // Footer
@@ -153,7 +239,7 @@ export const App = (): VirtualDOM => {
                 'p',
                 {
                   class:
-                    'm-6 font-bold flex select-none flex-col items-center justify-center text-center text-lg font-bold text-white drop-shadow-xl sm:text-xl md:text-2xl'
+                    'm-6 gap-1 font-bold flex select-none flex-col items-center justify-center text-center text-lg font-bold text-white drop-shadow-xl sm:text-xl md:text-2xl'
                 },
                 [
                   'by',
