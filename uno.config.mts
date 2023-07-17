@@ -8,7 +8,7 @@ export default defineConfig({
   presets: [
     presetUno(),
     presetWebFonts({
-      fonts: { main: 'Gentium Book Plus' }
+      fonts: { main: 'Libre Baskerville' }
     })
   ],
   content: {
