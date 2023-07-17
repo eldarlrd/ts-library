@@ -19,7 +19,7 @@ export const App = (): VirtualDOM => {
         'div#app',
         {
           class:
-            'flex items-center justify-around min-h-screen flex-col font-main bg-yellow-900'
+            'flex items-center justify-around min-h-screen flex-col font-main bg-yellow-900 accent-blue-500'
         },
         [
           // Header
@@ -57,7 +57,7 @@ export const App = (): VirtualDOM => {
                 'button',
                 {
                   class:
-                    'outline-none transition-colors active:bg-blue-700 hover:bg-blue-600 select-none bg-blue-500 text-white text-center text-lg sm:text-xl md:text-2xl font-bold rounded-xl px-3 py-2'
+                    'outline-none drop-shadow-md transition-colors active:bg-blue-700 hover:bg-blue-600 select-none bg-blue-500 text-white text-center text-lg sm:text-xl md:text-2xl font-bold rounded-xl px-3 py-2'
                 },
                 '+ New Book'
               ),
@@ -93,7 +93,7 @@ export const App = (): VirtualDOM => {
                         'button#read',
                         {
                           class:
-                            'outline-none transition-colors active:bg-green-700 hover:bg-green-600 select-none bg-green-500 text-white text-center sm:text-lg md:text-xl flex items-center justify-center gap-1 font-bold rounded-xl px-3 py-2 mx-3 -mb-4 w-[calc(100%-1.5em)]'
+                            'outline-none drop-shadow-md transition-colors active:bg-green-700 hover:bg-green-600 select-none bg-green-500 text-white text-center sm:text-lg md:text-xl flex items-center justify-center gap-1 font-bold rounded-xl px-3 py-2 mx-3 -mb-4 w-[calc(100%-1.5em)]'
                         },
                         [
                           m('img', {
@@ -108,7 +108,7 @@ export const App = (): VirtualDOM => {
                         'button#remove',
                         {
                           class:
-                            'outline-none transition-colors active:bg-red-700 hover:bg-red-600 select-none bg-red-500 text-white text-center sm:text-lg md:text-xl font-bold flex items-center justify-center gap-1 rounded-xl px-3 py-2 mx-3 mb-2 w-[calc(100%-1.5em)]'
+                            'outline-none drop-shadow-md transition-colors active:bg-red-700 hover:bg-red-600 select-none bg-red-500 text-white text-center sm:text-lg md:text-xl font-bold flex items-center justify-center gap-1 rounded-xl px-3 py-2 mx-3 mb-2 w-[calc(100%-1.5em)]'
                         },
                         [
                           m('img', {
@@ -122,7 +122,23 @@ export const App = (): VirtualDOM => {
                     ]
                   )
                 ]
-              )
+              ),
+              // Modal
+              m('div#overlay', {class: 'fixed inset-0 z-20 flex invisible h-full w-full items-center justify-center bg-black/75'}, [
+                m('section#modal', {class: 'scale-100 transition-transform flex flex-col items-center justify-center gap-6 rounded-md bg-stone-200 drop-shadow-2xl h-96 md:w-80'}, [
+                  m('h2', {class: 'select-none text-xl font-bold md:text-2xl'}, 'Book Details'),
+                  m('form', {class: 'flex flex-col items-center justify-center gap-6'}, [
+                    m('input#title', {class: 'px-3 py-2 rounded-md w-11/12', required: true, name: 'title', placeholder: 'Title'}),
+                    m('input#author', {class: 'px-3 py-2 rounded-md w-11/12', required: true, name: 'author', placeholder: 'Author'}),
+                    m('input#pages', {class: 'px-3 py-2 invalid:focus:accent-red-500 rounded-md w-11/12', required: true, min: 1, type: 'number', name: 'pages', placeholder: 'Pages'}),
+                    m('span', {class: 'flex gap-2'}, [
+                      m('label', {for: 'readStatus', class: 'text-lg md:text-xl select-none cursor-pointer'}, 'Have you read it?'),
+                      m('input#readStatus', {name: 'readStatus', class: 'cursor-pointer w-5 border outline-none', type: 'checkbox'})
+                    ]),
+                    m('input', {class: 'w-11/12 cursor-pointer outline-none drop-shadow-md transition-colors active:bg-blue-700 hover:bg-blue-600 select-none bg-blue-500 text-white text-center md:text-xl text-lg font-bold rounded-md px-3 py-2', name: 'submitBoom', type: 'submit', value: 'Add'})
+                  ])
+                ])
+              ])
             ]
           ),
           // Footer
