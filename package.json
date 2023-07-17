@@ -1,12 +1,12 @@
 {
   "name": "ts-library",
   "private": true,
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "pretty": "prettier --write src/**/*.{ts,tsx}",
+    "pretty": "prettier --write src/**/*.ts",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives",
     "format": "yarn pretty && yarn lint --fix",
     "preview": "vite preview",
@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "@types/mithril": "^2.0.12",
+    "@types/node": "^20.4.2",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "@unocss/eslint-config": "^0.53.5",

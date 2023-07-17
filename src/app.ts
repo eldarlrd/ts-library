@@ -22,11 +22,12 @@ export const App = (): VirtualDOM => {
           // Header
           m(
             'header',
+            {class: 'w-full -mb-12 shadow-md shadow-yellow-950/60 z-10'},
             m(
               'h1',
               {
                 class:
-                  'flex flex-wrap items-center justify-center gap-1 text-center text-white text-4xl font-bold select-none m-6 sm:text-5xl md:text-6xl'
+                  'flex flex-wrap items-center justify-center md:justify-start gap-2 text-center text-white text-4xl font-bold select-none m-6 sm:text-5xl md:text-6xl'
               },
               [
                 m(
@@ -34,16 +35,16 @@ export const App = (): VirtualDOM => {
                   { class: 'bg-blue-500 px-3 py-2 rounded-xl' },
                   'TypeScript'
                 ),
-                ' Library'
+                'Library'
               ]
             )
           ),
           // Main
-          m('main', { class: 'flex items-center justify-center' }, [
+          m('main', { class: 'flex bg-slate-50 flex-col items-center justify-center min-h-screen w-full' }, [
             m('h2', 'Mithril')
           ]),
           // Footer
-          m('footer', [
+          m('footer', {class: 'w-full -mt-12 z-10 shadow-md-top shadow-yellow-950/60'}, [
             m(
               'p',
               {
@@ -51,7 +52,7 @@ export const App = (): VirtualDOM => {
                   'm-6 font-bold flex select-none flex-col items-center justify-center text-center text-lg font-bold text-white drop-shadow-xl sm:text-xl md:text-2xl'
               },
               [
-                'by ',
+                'by',
                 m(
                   'a',
                   {
