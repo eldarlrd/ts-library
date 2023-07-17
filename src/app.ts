@@ -71,7 +71,7 @@ export const App = (): VirtualDOM => {
             'main',
             {
               class:
-                'flex bg-slate-50 gap-6 flex-col items-center p-6 min-h-[calc(100vh-16.25em)] w-full'
+                'flex bg-slate-50 gap-6 flex-col items-center p-6 md:min-h-[calc(100vh-16.75em)] min-h-[calc(100vh-16.25em)] w-full'
             },
             [
               m(
@@ -98,49 +98,60 @@ export const App = (): VirtualDOM => {
                     [
                       m(
                         'figcaption#title',
-                        { class: 'text-center text-lg sm:text-xl md:text-2xl' },
-                        '"Title"'
+                        {
+                          class:
+                            'mt-4 m-2 text-center text-lg sm:text-xl md:text-2xl hyphens-auto'
+                        },
+                        '"The Stranger"'
                       ),
                       m(
                         'figcaption#author',
-                        { class: 'text-center sm:text-lg md:text-xl' },
-                        'by Author'
+                        {
+                          class:
+                            'm-2 text-center sm:text-lg md:text-xl hyphens-auto'
+                        },
+                        'by Albert Camus'
                       ),
                       m(
                         'figcaption#pages',
-                        { class: 'text-center sm:text-lg md:text-xl' },
-                        '144 Pages'
-                      ),
-                      m(
-                        'button#read',
                         {
                           class:
-                            'outline-none drop-shadow-md transition-colors active:bg-green-700 hover:bg-green-600 select-none bg-green-500 text-white text-center sm:text-lg md:text-xl flex items-center justify-center gap-1 font-bold rounded-xl px-3 py-2 mx-3 -mb-4 w-[calc(100%-1.5em)]'
+                            'grow m-2 text-center sm:text-lg md:text-xl hyphens-auto'
                         },
-                        [
-                          m('img', {
-                            class: 'h-4 w-4 md:h-5 md:w-5',
-                            alt: 'Closed Book',
-                            src: bookClosed
-                          }),
-                          'Read'
-                        ]
+                        '159 Pages'
                       ),
-                      m(
-                        'button#remove',
-                        {
-                          class:
-                            'outline-none drop-shadow-md transition-colors active:bg-red-700 hover:bg-red-600 select-none bg-red-500 text-white text-center sm:text-lg md:text-xl font-bold flex items-center justify-center gap-1 rounded-xl px-3 py-2 mx-3 mb-2 w-[calc(100%-1.5em)]'
-                        },
-                        [
-                          m('img', {
-                            class: 'h-4 w-4 md:h-5 md:w-5',
-                            alt: 'Trash Can',
-                            src: trash
-                          }),
-                          'Remove'
-                        ]
-                      )
+                      m('span', { class: 'flex flex-col w-11/12 mb-2' }, [
+                        m(
+                          'button#read',
+                          {
+                            class:
+                              'outline-none drop-shadow-md transition-colors active:bg-green-700 hover:bg-green-600 select-none bg-green-500 text-white text-center sm:text-lg md:text-xl flex items-center justify-center gap-2 font-bold rounded-xl px-3 py-2 m-2'
+                          },
+                          [
+                            m('img', {
+                              class: 'h-4 w-4 md:h-5 md:w-5',
+                              alt: 'Closed Book',
+                              src: bookClosed
+                            }),
+                            'Read'
+                          ]
+                        ),
+                        m(
+                          'button#remove',
+                          {
+                            class:
+                              'outline-none drop-shadow-md transition-colors active:bg-red-700 hover:bg-red-600 select-none bg-red-500 text-white text-center sm:text-lg md:text-xl font-bold flex items-center justify-center gap-2 rounded-xl px-3 py-2 m-2'
+                          },
+                          [
+                            m('img', {
+                              class: 'h-4 w-4 md:h-5 md:w-5',
+                              alt: 'Trash Can',
+                              src: trash
+                            }),
+                            'Remove'
+                          ]
+                        )
+                      ])
                     ]
                   )
                 ]
@@ -191,7 +202,7 @@ export const App = (): VirtualDOM => {
                             class:
                               'px-3 py-2 invalid:focus:accent-red-500 rounded-xl w-11/12',
                             required: true,
-                            min: 1,
+                            min: 2,
                             type: 'number',
                             name: 'pages',
                             placeholder: 'Pages'
