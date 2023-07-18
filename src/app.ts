@@ -17,9 +17,9 @@ interface Modal {
   checkOutside: (target: EventTarget | null) => void;
 }
 
-const bookCreate: Modal = {
+const bookDetails: Modal = {
   isOpen: false,
-  toggleOpen: () => (bookCreate.isOpen = !bookCreate.isOpen),
+  toggleOpen: () => (bookDetails.isOpen = !bookDetails.isOpen),
   checkOutside: target => {
     target !== null
       ? (
@@ -28,8 +28,52 @@ const bookCreate: Modal = {
           )) as HTMLDivElement[]
         ).length
         ? null
-        : bookCreate.toggleOpen()
+        : bookDetails.toggleOpen()
       : null;
+  }
+};
+
+interface Book {
+  title: string;
+  author: string;
+  pages: number;
+  isRead: boolean;
+  addTitle: (title: string | null) => void;
+  addAuthor: (author: string | null) => void;
+  addPages: (pages: string | null) => void;
+  toggleRead: (isRead: boolean | null) => void;
+}
+
+const book: Book = {
+  title: '',
+  author: '',
+  pages: 0,
+  isRead: false,
+  addTitle: title => {
+    title !== null ? console.log(title) : null;
+  },
+  addAuthor: author => {
+    author !== null ? console.log(author) : null;
+  },
+  addPages: pages => {
+    pages !== null ? console.log(pages) : null;
+  },
+  toggleRead: isRead => {
+    isRead !== null ? console.log(isRead) : null;
+  }
+};
+
+interface BookList {
+  books: Book[];
+  addBook: (e: Event) => void;
+}
+
+const library: BookList = {
+  books: [],
+  addBook: e => {
+    if (e !== null) {
+      e.preventDefault();
+    }
   }
 };
 
@@ -77,7 +121,7 @@ export const App = (): VirtualDOM => {
               m(
                 'button',
                 {
-                  onclick: bookCreate.toggleOpen,
+                  onclick: bookDetails.toggleOpen,
                   class:
                     'outline-none drop-shadow-md transition-colors active:bg-blue-700 hover:bg-blue-600 select-none bg-blue-500 text-white text-center text-lg sm:text-xl md:text-2xl font-bold rounded-xl px-3 py-2'
                 },
@@ -160,8 +204,8 @@ export const App = (): VirtualDOM => {
               m(
                 'div#overlay',
                 {
-                  onclick: bookCreate.toggleOpen,
-                  class: bookCreate.isOpen
+                  onclick: bookDetails.toggleOpen,
+                  class: bookDetails.isOpen
                     ? 'fixed inset-0 z-20 flex h-full w-full items-center justify-center bg-black/75'
                     : 'hidden'
                 },
@@ -169,9 +213,9 @@ export const App = (): VirtualDOM => {
                   m(
                     'section#modal',
                     {
-                      onclick: (e: Event) => bookCreate.checkOutside(e.target),
+                      onclick: (e: Event) => bookDetails.checkOutside(e.target),
                       class:
-                        'scale-100 transition-transform flex flex-col items-center justify-center gap-6 rounded-xl bg-stone-200 drop-shadow-2xl h-96 md:w-80'
+                        'scale-100 transition-transform flex flex-col items-center justify-center gap-6 rounded-xl bg-stone-200 drop-shadow-2xl max-h-full h-96 md:w-80'
                     },
                     [
                       m(
@@ -187,20 +231,32 @@ export const App = (): VirtualDOM => {
                         },
                         [
                           m('input#title', {
+                            oninput: (e: Event) =>
+                              book.addTitle(
+                                (e.target as HTMLInputElement).value
+                              ),
                             class: 'px-3 py-2 rounded-xl w-11/12',
                             required: true,
                             name: 'title',
                             placeholder: 'Title'
                           }),
                           m('input#author', {
+                            oninput: (e: Event) =>
+                              book.addAuthor(
+                                (e.target as HTMLInputElement).value
+                              ),
                             class: 'px-3 py-2 rounded-xl w-11/12',
                             required: true,
                             name: 'author',
                             placeholder: 'Author'
                           }),
                           m('input#pages', {
+                            oninput: (e: Event) =>
+                              book.addPages(
+                                (e.target as HTMLInputElement).value
+                              ),
                             class:
-                              'px-3 py-2 invalid:focus:accent-red-500 rounded-xl w-11/12',
+                              'px-3 py-2 focus:invalid:accent-red-500 rounded-xl w-11/12',
                             required: true,
                             min: 2,
                             type: 'number',
@@ -218,12 +274,17 @@ export const App = (): VirtualDOM => {
                               'Have you read it?'
                             ),
                             m('input#readStatus', {
+                              oninput: (e: Event) =>
+                                book.toggleRead(
+                                  (e.target as HTMLInputElement).checked
+                                ),
                               name: 'readStatus',
                               class: 'cursor-pointer w-5 border outline-none',
                               type: 'checkbox'
                             })
                           ]),
                           m('input', {
+                            onclick: (e: Event) => library.addBook(e),
                             class:
                               'w-11/12 cursor-pointer outline-none drop-shadow-md transition-colors active:bg-blue-700 hover:bg-blue-600 select-none bg-blue-500 text-white text-center md:text-xl text-lg font-bold rounded-xl px-3 py-2',
                             name: 'submitBoom',
@@ -281,3 +342,9 @@ export const App = (): VirtualDOM => {
       )
   };
 };
+
+// Easter Egg
+console.log(
+  `"I'm quite illiterate, but I read a lot."
+- J. D. Salinger, The Catcher in the Rye`
+);
