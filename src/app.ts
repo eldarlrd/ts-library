@@ -1,4 +1,4 @@
-import m from 'mithril';
+import m, { Vnode, VnodeDOM } from 'mithril';
 import '@unocss/reset/tailwind.css';
 import 'virtual:uno.css';
 // import bookOpen from '@/assets/book-open.svg';
@@ -43,8 +43,9 @@ interface BookDetails {
 }
 
 interface BookList extends BookDetails {
+  form: EventTarget | null,
   books: BookDetails[];
-  addBook: (e: Event) => void;
+  addBook: (submit: HTMLInputElement) => void;
   addTitle: (title: string | null) => void;
   addAuthor: (author: string | null) => void;
   addPages: (pages: string | null) => void;
@@ -52,15 +53,16 @@ interface BookList extends BookDetails {
 }
 
 const library: BookList = {
+  form: new EventTarget(),
   books: [],
   title: '',
   author: '',
   pages: 0,
   isRead: false,
-  addBook: e => {
-    if (e !== null) {
-      e.preventDefault();
-    }
+  addBook: (submit) => {
+    library.form = document.getElementsByTagName('form')[0];
+    const formData = new FormData(library.form as HTMLFormElement, submit);
+    console.log(formData)
   },
   addTitle: title => {
     if (title !== null) {
@@ -233,6 +235,7 @@ export const App = (): VirtualDOM => {
                       m(
                         'form',
                         {
+                          oncreate: (e: VnodeDOM) => {library.form = ((<unknown>e as Event).target)},
                           class:
                             'flex flex-col items-center justify-center gap-6'
                         },
@@ -291,8 +294,8 @@ export const App = (): VirtualDOM => {
                             })
                           ]),
                           m('input', {
-                            onclick: (e: Event) => library.addBook(e),
-                            disabled: bookWindow.isDisabled,
+                            onclick: (e: Event) => {e.preventDefault(); library.addBook(e.target as HTMLInputElement)},
+                            // disabled: bookWindow.isDisabled,
                             class:
                               'w-11/12 cursor-pointer outline-none drop-shadow-md transition-colors active:bg-blue-700 hover:bg-blue-600 select-none bg-blue-500 text-white text-center md:text-xl text-lg font-bold rounded-xl px-3 py-2',
                             name: 'submitBoom',
