@@ -1,4 +1,4 @@
-import m, { Vnode, VnodeDOM } from 'mithril';
+import m, { VnodeDOM } from 'mithril';
 import '@unocss/reset/tailwind.css';
 import 'virtual:uno.css';
 // import bookOpen from '@/assets/book-open.svg';
@@ -36,33 +36,35 @@ const bookWindow: Modal = {
 };
 
 interface BookDetails {
-  title: string;
-  author: string;
-  pages: number;
-  isRead: boolean;
+  [key: string]: FormDataEntryValue | string | number | boolean | undefined;
+  title?: string;
+  author?: string;
+  pages?: number;
+  isRead?: boolean;
 }
 
-interface BookList extends BookDetails {
-  form: EventTarget | null,
+interface BookList {
+  form: EventTarget | null;
   books: BookDetails[];
-  addBook: (submit: HTMLInputElement) => void;
+  addBook: (e: Event) => void;
   addTitle: (title: string | null) => void;
   addAuthor: (author: string | null) => void;
   addPages: (pages: string | null) => void;
   toggleRead: (isRead: boolean | null) => void;
 }
 
+const book: BookDetails = {};
+
 const library: BookList = {
   form: new EventTarget(),
   books: [],
-  title: '',
-  author: '',
-  pages: 0,
-  isRead: false,
-  addBook: (submit) => {
-    library.form = document.getElementsByTagName('form')[0];
-    const formData = new FormData(library.form as HTMLFormElement, submit);
-    console.log(formData)
+  addBook: e => {
+    if (e !== null) {
+      library.form = document.getElementsByTagName('form')[0];
+      const formData = new FormData(library.form as HTMLFormElement);
+      formData.forEach((v, k) => (book[k as keyof BookDetails] = v));
+      library.books.push(book);
+    }
   },
   addTitle: title => {
     if (title !== null) {
@@ -142,70 +144,72 @@ export const App = (): VirtualDOM => {
                   class: 'flex flex-wrap gap-4 items-center justify-center mb-4'
                 },
                 [
-                  m(
-                    'figure',
-                    {
-                      class:
-                        'flex shadow-md justify-around items-center flex-col flex-wrap rounded-xl w-64 min-h-80 bg-stone-200'
-                    },
-                    [
-                      m(
-                        'figcaption#title',
-                        {
-                          class:
-                            'mt-4 m-2 text-center text-lg sm:text-xl md:text-2xl hyphens-auto'
-                        },
-                        '"The Stranger"'
-                      ),
-                      m(
-                        'figcaption#author',
-                        {
-                          class:
-                            'm-2 text-center sm:text-lg md:text-xl hyphens-auto'
-                        },
-                        'by Albert Camus'
-                      ),
-                      m(
-                        'figcaption#pages',
-                        {
-                          class:
-                            'grow m-2 text-center sm:text-lg md:text-xl hyphens-auto'
-                        },
-                        '159 Pages'
-                      ),
-                      m('span', { class: 'flex flex-col w-11/12 mb-2' }, [
+                  library.books.map(item =>
+                    m(
+                      'figure',
+                      {
+                        class:
+                          'flex shadow-md justify-around items-center flex-col flex-wrap rounded-xl w-64 min-h-80 bg-stone-200'
+                      },
+                      [
                         m(
-                          'button#read',
+                          'figcaption#title',
                           {
                             class:
-                              'outline-none drop-shadow-md transition-colors active:bg-green-700 hover:bg-green-600 select-none bg-green-500 text-white text-center sm:text-lg md:text-xl flex items-center justify-center gap-2 font-bold rounded-xl px-3 py-2 m-2'
+                              'mt-4 m-2 text-center text-lg sm:text-xl md:text-2xl hyphens-auto'
                           },
-                          [
-                            m('img', {
-                              class: 'h-4 w-4 md:h-5 md:w-5',
-                              alt: 'Closed Book',
-                              src: bookClosed
-                            }),
-                            'Read'
-                          ]
+                          `"${item.title}"`
                         ),
                         m(
-                          'button#remove',
+                          'figcaption#author',
                           {
                             class:
-                              'outline-none drop-shadow-md transition-colors active:bg-red-700 hover:bg-red-600 select-none bg-red-500 text-white text-center sm:text-lg md:text-xl font-bold flex items-center justify-center gap-2 rounded-xl px-3 py-2 m-2'
+                              'm-2 text-center sm:text-lg md:text-xl hyphens-auto'
                           },
-                          [
-                            m('img', {
-                              class: 'h-4 w-4 md:h-5 md:w-5',
-                              alt: 'Trash Can',
-                              src: trash
-                            }),
-                            'Remove'
-                          ]
-                        )
-                      ])
-                    ]
+                          `by ${item.author}`
+                        ),
+                        m(
+                          'figcaption#pages',
+                          {
+                            class:
+                              'grow m-2 text-center sm:text-lg md:text-xl hyphens-auto'
+                          },
+                          `${item.pages} Pages`
+                        ),
+                        m('span', { class: 'flex flex-col w-11/12 mb-2' }, [
+                          m(
+                            'button#read',
+                            {
+                              class:
+                                'outline-none drop-shadow-md transition-colors active:bg-green-700 hover:bg-green-600 select-none bg-green-500 text-white text-center sm:text-lg md:text-xl flex items-center justify-center gap-2 font-bold rounded-xl px-3 py-2 m-2'
+                            },
+                            [
+                              m('img', {
+                                class: 'h-4 w-4 md:h-5 md:w-5',
+                                alt: 'Closed Book',
+                                src: bookClosed
+                              }),
+                              'Read'
+                            ]
+                          ),
+                          m(
+                            'button#remove',
+                            {
+                              class:
+                                'outline-none drop-shadow-md transition-colors active:bg-red-700 hover:bg-red-600 select-none bg-red-500 text-white text-center sm:text-lg md:text-xl font-bold flex items-center justify-center gap-2 rounded-xl px-3 py-2 m-2'
+                            },
+                            [
+                              m('img', {
+                                class: 'h-4 w-4 md:h-5 md:w-5',
+                                alt: 'Trash Can',
+                                src: trash
+                              }),
+                              'Remove'
+                            ]
+                          )
+                        ])
+                      ]
+                    )
                   )
                 ]
               ),
@@ -235,7 +239,9 @@ export const App = (): VirtualDOM => {
                       m(
                         'form',
                         {
-                          oncreate: (e: VnodeDOM) => {library.form = ((<unknown>e as Event).target)},
+                          oncreate: (e: VnodeDOM) => {
+                            library.form = ((<unknown>e) as Event).target;
+                          },
                           class:
                             'flex flex-col items-center justify-center gap-6'
                         },
@@ -294,7 +300,10 @@ export const App = (): VirtualDOM => {
                             })
                           ]),
                           m('input', {
-                            onclick: (e: Event) => {e.preventDefault(); library.addBook(e.target as HTMLInputElement)},
+                            onclick: (e: Event) => {
+                              e.preventDefault();
+                              library.addBook(e);
+                            },
                             // disabled: bookWindow.isDisabled,
                             class:
                               'w-11/12 cursor-pointer outline-none drop-shadow-md transition-colors active:bg-blue-700 hover:bg-blue-600 select-none bg-blue-500 text-white text-center md:text-xl text-lg font-bold rounded-xl px-3 py-2',
