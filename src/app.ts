@@ -1,11 +1,11 @@
 import m, { VnodeDOM } from 'mithril';
-import '@unocss/reset/tailwind.css';
-import 'virtual:uno.css';
+import { Header } from '@/components/header';
+import { Footer } from '@/components/footer';
 import bookOpen from '@/assets/book-open.svg';
 import bookClosed from '@/assets/book-closed.svg';
 import trash from '@/assets/trash.svg';
-import githubLogo from '@/assets/github.svg';
-const githubURL: string = 'https://github.com/eldarlrd';
+import '@unocss/reset/tailwind.css';
+import 'virtual:uno.css';
 
 interface VirtualDOM {
   view: () => m.Vnode;
@@ -134,34 +134,14 @@ export const App = (): VirtualDOM => {
       m(
         'div#app',
         {
+          oncreate: localStorage
+            ? (library.books = JSON.parse(localStorage.books))
+            : null,
           class:
             'flex items-center justify-around min-h-screen flex-col font-main bg-yellow-900 accent-blue-500'
         },
         [
-          // Header
-          m(
-            'header',
-            {
-              class:
-                'min-h-[9.5em] flex items-center justify-center w-full shadow-md shadow-yellow-950/60 z-10'
-            },
-            m(
-              'h1',
-              {
-                class:
-                  'flex flex-wrap items-center justify-center md:justify-start gap-2 text-center text-white text-4xl font-bold select-none m-6 sm:text-5xl md:text-6xl'
-              },
-              [
-                m(
-                  'span',
-                  { class: 'bg-blue-500 px-3 py-2 rounded-xl' },
-                  'TypeScript'
-                ),
-                'Library'
-              ]
-            )
-          ),
-          // Main
+          m(Header),
           m(
             'main',
             {
@@ -379,45 +359,7 @@ export const App = (): VirtualDOM => {
               )
             ]
           ),
-          // Footer
-          m(
-            'footer',
-            {
-              class:
-                'flex items-center justify-center w-full z-10 shadow-md-top shadow-yellow-950/60'
-            },
-            [
-              m(
-                'p',
-                {
-                  class:
-                    'm-6 gap-1 font-bold flex select-none flex-col items-center justify-center text-center text-lg font-bold text-white drop-shadow-xl sm:text-xl md:text-2xl'
-                },
-                [
-                  'by',
-                  m(
-                    'a',
-                    {
-                      class:
-                        'outline-none flex items-center justify-center gap-1 text-center transition-transform hover:scale-110',
-                      title: 'Go to GitHub',
-                      target: '_blank',
-                      rel: 'noreferrer',
-                      href: githubURL
-                    },
-                    [
-                      m('img', {
-                        class: 'h-6 w-6',
-                        alt: 'GitHub Logo',
-                        src: githubLogo
-                      }),
-                      'eldarlrd'
-                    ]
-                  )
-                ]
-              )
-            ]
-          )
+          m(Footer)
         ]
       )
   };
@@ -428,5 +370,3 @@ console.log(
   `"I'm quite illiterate, but I read a lot."
 - J. D. Salinger, The Catcher in the Rye`
 );
-
-library.books = JSON.parse(localStorage.books);
