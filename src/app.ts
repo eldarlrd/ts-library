@@ -15,6 +15,7 @@ interface Modal {
   isOpen: boolean;
   isDisabled: boolean;
   toggleOpen: () => boolean;
+  toggleDisabled: () => void;
   checkOutside: (target: EventTarget | null) => void;
 }
 
@@ -22,6 +23,11 @@ const bookWindow: Modal = {
   isOpen: false,
   isDisabled: true,
   toggleOpen: () => (bookWindow.isOpen = !bookWindow.isOpen),
+  toggleDisabled: () => {
+    if (!library.title || !library.author || !library.pages)
+      bookWindow.isDisabled = true;
+    else bookWindow.isDisabled = false;
+  },
   checkOutside: target => {
     target !== null
       ? (
@@ -52,9 +58,9 @@ interface BookList {
   checkTitle: (title: string) => void;
   checkAuthor: (author: string) => void;
   checkPages: (pages: string) => void;
-  toggleDisabled: () => void;
   removeBook: (title: string | undefined) => void;
   toggleRead: (title: string | undefined) => void;
+  setLibrary: () => void;
 }
 
 const library: BookList = {
@@ -67,31 +73,34 @@ const library: BookList = {
     if (e !== null) {
       library.form = document.getElementsByTagName('form')[0];
       const formData = new FormData(library.form as HTMLFormElement);
-      library.books.push(Object.fromEntries(formData.entries()));
+      if (
+        !library.books.some(
+          book => book.title === Object.fromEntries(formData.entries()).title
+        )
+      ) {
+        library.books.push(Object.fromEntries(formData.entries()));
+        bookWindow.isOpen = false;
+        bookWindow.isDisabled = true;
+        (library.title = ''), (library.author = ''), (library.pages = '');
+        (document.getElementById('isRead') as HTMLInputElement).checked = false;
+        library.setLibrary();
+      } else alert('ERROR: Duplicates are not allowed!');
     }
   },
   checkTitle: title => {
-    if (title)
-      library.title = title;
+    if (title) library.title = title;
     else library.title = '';
-    library.toggleDisabled();
+    bookWindow.toggleDisabled();
   },
   checkAuthor: author => {
-    if (author)
-      library.author = author;
+    if (author) library.author = author;
     else library.author = '';
-    library.toggleDisabled();
+    bookWindow.toggleDisabled();
   },
   checkPages: pages => {
-    if (pages !== null && +pages > 1 && +pages % 1 === 0)
-      library.pages = pages;
+    if (pages !== null && +pages > 0 && +pages % 1 === 0) library.pages = pages;
     else library.pages = '';
-    library.toggleDisabled();
-  },
-  toggleDisabled: () => {
-    if (!library.title || !library.author || !library.pages)
-      bookWindow.isDisabled = true;
-    else bookWindow.isDisabled = false;
+    bookWindow.toggleDisabled();
   },
   removeBook: title => {
     if (title !== null) {
@@ -99,6 +108,7 @@ const library: BookList = {
         return book.title === title;
       });
       library.books.splice(index, 1);
+      library.setLibrary();
     }
   },
   toggleRead: title => {
@@ -106,11 +116,16 @@ const library: BookList = {
       const index = library.books.findIndex(book => {
         return book.title === title;
       });
-      library.books[index].isRead
-        ? (library.books[index].isRead = '')
-        : (library.books[index].isRead = 'on');
+      if (library.books[index].isRead) {
+        library.books[index].isRead = '';
+        library.setLibrary();
+      } else {
+        library.books[index].isRead = 'on';
+        library.setLibrary();
+      }
     }
-  }
+  },
+  setLibrary: () => localStorage.setItem('books', JSON.stringify(library.books))
 };
 
 export const App = (): VirtualDOM => {
@@ -159,7 +174,7 @@ export const App = (): VirtualDOM => {
                 {
                   onclick: bookWindow.toggleOpen,
                   class:
-                    'outline-none drop-shadow-md transition-colors active:bg-blue-700 hover:bg-blue-600 select-none bg-blue-500 text-white text-center text-lg sm:text-xl md:text-2xl font-bold rounded-xl px-3 py-2'
+                    'focus:outline drop-shadow-md transition-colors active:bg-blue-700 hover:bg-blue-600 select-none bg-blue-500 text-white text-center text-lg sm:text-xl md:text-2xl font-bold rounded-xl px-3 py-2'
                 },
                 '+ New Book'
               ),
@@ -200,7 +215,11 @@ export const App = (): VirtualDOM => {
                             class:
                               'grow m-2 text-center sm:text-lg md:text-xl hyphens-auto'
                           },
-                          `${item.pages} Pages`
+                          item.pages !== undefined
+                            ? +item.pages === 1
+                              ? `${item.pages} Page`
+                              : `${item.pages} Pages`
+                            : ''
                         ),
                         m('span', { class: 'flex flex-col w-11/12 mb-2' }, [
                           m(
@@ -211,7 +230,7 @@ export const App = (): VirtualDOM => {
                                 item.isRead === 'on'
                                   ? 'active:bg-green-700 hover:bg-green-600 bg-green-500'
                                   : 'active:bg-amber-700 hover:bg-amber-600 bg-amber-500'
-                              } outline-none drop-shadow-md transition-colors select-none text-white text-center sm:text-lg md:text-xl flex items-center justify-center gap-2 font-bold rounded-xl px-3 py-2 m-2`
+                              } focus:outline drop-shadow-md transition-colors select-none text-white text-center sm:text-lg md:text-xl flex items-center justify-center gap-2 font-bold rounded-xl px-3 py-2 m-2`
                             },
                             [
                               m('img', {
@@ -231,7 +250,7 @@ export const App = (): VirtualDOM => {
                             {
                               onclick: () => library.removeBook(item.title),
                               class:
-                                'outline-none drop-shadow-md transition-colors active:bg-red-700 hover:bg-red-600 select-none bg-red-500 text-white text-center sm:text-lg md:text-xl font-bold flex items-center justify-center gap-2 rounded-xl px-3 py-2 m-2'
+                                'focus:outline drop-shadow-md transition-colors active:bg-red-700 hover:bg-red-600 select-none bg-red-500 text-white text-center sm:text-lg md:text-xl font-bold flex items-center justify-center gap-2 rounded-xl px-3 py-2 m-2'
                             },
                             [
                               m('img', {
@@ -286,7 +305,10 @@ export const App = (): VirtualDOM => {
                               library.checkTitle(
                                 (e.target as HTMLInputElement).value
                               ),
-                            class: 'px-3 py-2 rounded-xl w-11/12',
+                            value: library.title,
+                            min: 1,
+                            class:
+                              'px-3 py-2 focus:invalid:accent-red-500 rounded-xl w-11/12',
                             required: true,
                             name: 'title',
                             placeholder: 'Title'
@@ -296,7 +318,10 @@ export const App = (): VirtualDOM => {
                               library.checkAuthor(
                                 (e.target as HTMLInputElement).value
                               ),
-                            class: 'px-3 py-2 rounded-xl w-11/12',
+                            value: library.author,
+                            min: 1,
+                            class:
+                              'px-3 py-2 focus:invalid:accent-red-500 rounded-xl w-11/12',
                             required: true,
                             name: 'author',
                             placeholder: 'Author'
@@ -306,10 +331,11 @@ export const App = (): VirtualDOM => {
                               library.checkPages(
                                 (e.target as HTMLInputElement).value
                               ),
+                            value: library.pages,
                             class:
                               'px-3 py-2 focus:invalid:accent-red-500 rounded-xl w-11/12',
                             required: true,
-                            min: 2,
+                            min: 1,
                             type: 'number',
                             name: 'pages',
                             placeholder: 'Pages'
@@ -326,7 +352,7 @@ export const App = (): VirtualDOM => {
                             ),
                             m('input#isRead', {
                               name: 'isRead',
-                              class: 'cursor-pointer w-5 border outline-none',
+                              class: 'cursor-pointer w-5 border',
                               type: 'checkbox'
                             })
                           ]),
@@ -340,7 +366,7 @@ export const App = (): VirtualDOM => {
                               bookWindow.isDisabled
                                 ? 'cursor-not-allowed bg-gray-500 active:bg-gray-700 hover:bg-gray-600'
                                 : 'cursor-pointer bg-blue-500 active:bg-blue-700 hover:bg-blue-600'
-                            } w-11/12 outline-none drop-shadow-md transition-colors select-none text-white text-center md:text-xl text-lg font-bold rounded-xl px-3 py-2`,
+                            } w-11/12 focus:outline drop-shadow-md transition-colors select-none text-white text-center md:text-xl text-lg font-bold rounded-xl px-3 py-2`,
                             name: 'submitBoom',
                             type: 'submit',
                             value: 'Add'
@@ -402,3 +428,5 @@ console.log(
   `"I'm quite illiterate, but I read a lot."
 - J. D. Salinger, The Catcher in the Rye`
 );
+
+library.books = JSON.parse(localStorage.books);
