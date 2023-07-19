@@ -36,7 +36,6 @@ const bookWindow: Modal = {
 };
 
 interface BookDetails {
-  [key: string]: FormDataEntryValue | string | number | boolean | undefined;
   title?: string;
   author?: string;
   pages?: number;
@@ -47,13 +46,7 @@ interface BookList {
   form: EventTarget | null;
   books: BookDetails[];
   addBook: (e: Event) => void;
-  addTitle: (title: string | null) => void;
-  addAuthor: (author: string | null) => void;
-  addPages: (pages: string | null) => void;
-  toggleRead: (isRead: boolean | null) => void;
 }
-
-const book: BookDetails = {};
 
 const library: BookList = {
   form: new EventTarget(),
@@ -62,29 +55,7 @@ const library: BookList = {
     if (e !== null) {
       library.form = document.getElementsByTagName('form')[0];
       const formData = new FormData(library.form as HTMLFormElement);
-      formData.forEach((v, k) => (book[k as keyof BookDetails] = v));
-      library.books.push(book);
-      console.log(library.books);
-    }
-  },
-  addTitle: title => {
-    if (title !== null) {
-      console.log(title);
-    }
-  },
-  addAuthor: author => {
-    if (author !== null) {
-      console.log(author);
-    }
-  },
-  addPages: pages => {
-    if (pages !== null && +pages > 1 && +pages % 1 === 0) {
-      console.log(pages);
-    }
-  },
-  toggleRead: isRead => {
-    if (isRead !== null) {
-      console.log(isRead);
+      library.books.push(Object.fromEntries(formData.entries()))
     }
   }
 };
@@ -256,30 +227,18 @@ export const App = (): VirtualDOM => {
                         },
                         [
                           m('input#title', {
-                            oninput: (e: Event) =>
-                              library.addTitle(
-                                (e.target as HTMLInputElement).value
-                              ),
                             class: 'px-3 py-2 rounded-xl w-11/12',
                             required: true,
                             name: 'title',
                             placeholder: 'Title'
                           }),
                           m('input#author', {
-                            oninput: (e: Event) =>
-                              library.addAuthor(
-                                (e.target as HTMLInputElement).value
-                              ),
                             class: 'px-3 py-2 rounded-xl w-11/12',
                             required: true,
                             name: 'author',
                             placeholder: 'Author'
                           }),
                           m('input#pages', {
-                            oninput: (e: Event) =>
-                              library.addPages(
-                                (e.target as HTMLInputElement).value
-                              ),
                             class:
                               'px-3 py-2 focus:invalid:accent-red-500 rounded-xl w-11/12',
                             required: true,
@@ -299,10 +258,7 @@ export const App = (): VirtualDOM => {
                               'Have you read it?'
                             ),
                             m('input#isRead', {
-                              oninput: (e: Event) =>
-                                library.toggleRead(
-                                  (e.target as HTMLInputElement).checked
-                                ),
+
                               name: 'isRead',
                               class: 'cursor-pointer w-5 border outline-none',
                               type: 'checkbox'
