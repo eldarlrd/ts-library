@@ -1,7 +1,7 @@
 {
   "name": "ts-library",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -22,8 +22,8 @@
   "devDependencies": {
     "@types/mithril": "^2.0.12",
     "@types/node": "^20.4.2",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.1.0",
+    "@typescript-eslint/parser": "^6.1.0",
     "@unocss/eslint-config": "^0.53.5",
     "@unocss/preset-uno": "^0.53.5",
     "@unocss/preset-web-fonts": "^0.53.5",

@@ -134,7 +134,7 @@ export const App = (): VirtualDOM => {
       m(
         'div#app',
         {
-          oncreate: localStorage
+          oncreate: localStorage.books
             ? (library.books = JSON.parse(localStorage.books))
             : null,
           class:
