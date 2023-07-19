@@ -1,7 +1,7 @@
 import m, { VnodeDOM } from 'mithril';
 import '@unocss/reset/tailwind.css';
 import 'virtual:uno.css';
-// import bookOpen from '@/assets/book-open.svg';
+import bookOpen from '@/assets/book-open.svg';
 import bookClosed from '@/assets/book-closed.svg';
 import trash from '@/assets/trash.svg';
 import githubLogo from '@/assets/github.svg';
@@ -40,7 +40,7 @@ interface BookDetails {
   title?: string;
   author?: string;
   pages?: number;
-  isRead?: boolean;
+  isRead?: string;
 }
 
 interface BookList {
@@ -64,6 +64,7 @@ const library: BookList = {
       const formData = new FormData(library.form as HTMLFormElement);
       formData.forEach((v, k) => (book[k as keyof BookDetails] = v));
       library.books.push(book);
+      console.log(library.books);
     }
   },
   addTitle: title => {
@@ -148,6 +149,7 @@ export const App = (): VirtualDOM => {
                     m(
                       'figure',
                       {
+                        key: item.title,
                         class:
                           'flex shadow-md justify-around items-center flex-col flex-wrap rounded-xl w-64 min-h-80 bg-stone-200'
                       },
@@ -180,16 +182,23 @@ export const App = (): VirtualDOM => {
                           m(
                             'button#read',
                             {
-                              class:
-                                'outline-none drop-shadow-md transition-colors active:bg-green-700 hover:bg-green-600 select-none bg-green-500 text-white text-center sm:text-lg md:text-xl flex items-center justify-center gap-2 font-bold rounded-xl px-3 py-2 m-2'
+                              class: `${
+                                item.isRead === 'on'
+                                  ? 'active:bg-green-700 hover:bg-green-600 bg-green-500'
+                                  : 'active:bg-amber-700 hover:bg-amber-600 bg-amber-500'
+                              } outline-none drop-shadow-md transition-colors select-none text-white text-center sm:text-lg md:text-xl flex items-center justify-center gap-2 font-bold rounded-xl px-3 py-2 m-2`
                             },
                             [
                               m('img', {
                                 class: 'h-4 w-4 md:h-5 md:w-5',
-                                alt: 'Closed Book',
-                                src: bookClosed
+                                alt:
+                                  item.isRead === 'on'
+                                    ? 'Closed Book'
+                                    : 'Open Book',
+                                src:
+                                  item.isRead === 'on' ? bookClosed : bookOpen
                               }),
-                              'Read'
+                              item.isRead === 'on' ? 'Read' : 'Not read'
                             ]
                           ),
                           m(
@@ -283,18 +292,18 @@ export const App = (): VirtualDOM => {
                             m(
                               'label',
                               {
-                                for: 'readStatus',
+                                for: 'isRead',
                                 class:
                                   'text-lg md:text-xl select-none cursor-pointer'
                               },
                               'Have you read it?'
                             ),
-                            m('input#readStatus', {
+                            m('input#isRead', {
                               oninput: (e: Event) =>
                                 library.toggleRead(
                                   (e.target as HTMLInputElement).checked
                                 ),
-                              name: 'readStatus',
+                              name: 'isRead',
                               class: 'cursor-pointer w-5 border outline-none',
                               type: 'checkbox'
                             })
