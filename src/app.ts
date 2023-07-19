@@ -45,17 +45,70 @@ interface BookDetails {
 interface BookList {
   form: EventTarget | null;
   books: BookDetails[];
+  title?: string;
+  author?: string;
+  pages?: string;
   addBook: (e: Event) => void;
+  checkTitle: (title: string) => void;
+  checkAuthor: (author: string) => void;
+  checkPages: (pages: string) => void;
+  toggleDisabled: () => void;
+  removeBook: (title: string | undefined) => void;
+  toggleRead: (title: string | undefined) => void;
 }
 
 const library: BookList = {
   form: new EventTarget(),
   books: [],
+  title: '',
+  author: '',
+  pages: '',
   addBook: e => {
     if (e !== null) {
       library.form = document.getElementsByTagName('form')[0];
       const formData = new FormData(library.form as HTMLFormElement);
-      library.books.push(Object.fromEntries(formData.entries()))
+      library.books.push(Object.fromEntries(formData.entries()));
+    }
+  },
+  checkTitle: title => {
+    if (title)
+      library.title = title;
+    else library.title = '';
+    library.toggleDisabled();
+  },
+  checkAuthor: author => {
+    if (author)
+      library.author = author;
+    else library.author = '';
+    library.toggleDisabled();
+  },
+  checkPages: pages => {
+    if (pages !== null && +pages > 1 && +pages % 1 === 0)
+      library.pages = pages;
+    else library.pages = '';
+    library.toggleDisabled();
+  },
+  toggleDisabled: () => {
+    if (!library.title || !library.author || !library.pages)
+      bookWindow.isDisabled = true;
+    else bookWindow.isDisabled = false;
+  },
+  removeBook: title => {
+    if (title !== null) {
+      const index = library.books.findIndex(book => {
+        return book.title === title;
+      });
+      library.books.splice(index, 1);
+    }
+  },
+  toggleRead: title => {
+    if (title !== null) {
+      const index = library.books.findIndex(book => {
+        return book.title === title;
+      });
+      library.books[index].isRead
+        ? (library.books[index].isRead = '')
+        : (library.books[index].isRead = 'on');
     }
   }
 };
@@ -153,6 +206,7 @@ export const App = (): VirtualDOM => {
                           m(
                             'button#read',
                             {
+                              onclick: () => library.toggleRead(item.title),
                               class: `${
                                 item.isRead === 'on'
                                   ? 'active:bg-green-700 hover:bg-green-600 bg-green-500'
@@ -175,6 +229,7 @@ export const App = (): VirtualDOM => {
                           m(
                             'button#remove',
                             {
+                              onclick: () => library.removeBook(item.title),
                               class:
                                 'outline-none drop-shadow-md transition-colors active:bg-red-700 hover:bg-red-600 select-none bg-red-500 text-white text-center sm:text-lg md:text-xl font-bold flex items-center justify-center gap-2 rounded-xl px-3 py-2 m-2'
                             },
@@ -227,18 +282,30 @@ export const App = (): VirtualDOM => {
                         },
                         [
                           m('input#title', {
+                            oninput: (e: Event) =>
+                              library.checkTitle(
+                                (e.target as HTMLInputElement).value
+                              ),
                             class: 'px-3 py-2 rounded-xl w-11/12',
                             required: true,
                             name: 'title',
                             placeholder: 'Title'
                           }),
                           m('input#author', {
+                            oninput: (e: Event) =>
+                              library.checkAuthor(
+                                (e.target as HTMLInputElement).value
+                              ),
                             class: 'px-3 py-2 rounded-xl w-11/12',
                             required: true,
                             name: 'author',
                             placeholder: 'Author'
                           }),
                           m('input#pages', {
+                            oninput: (e: Event) =>
+                              library.checkPages(
+                                (e.target as HTMLInputElement).value
+                              ),
                             class:
                               'px-3 py-2 focus:invalid:accent-red-500 rounded-xl w-11/12',
                             required: true,
@@ -258,7 +325,6 @@ export const App = (): VirtualDOM => {
                               'Have you read it?'
                             ),
                             m('input#isRead', {
-
                               name: 'isRead',
                               class: 'cursor-pointer w-5 border outline-none',
                               type: 'checkbox'
@@ -269,9 +335,12 @@ export const App = (): VirtualDOM => {
                               e.preventDefault();
                               library.addBook(e);
                             },
-                            // disabled: bookWindow.isDisabled,
-                            class:
-                              'w-11/12 cursor-pointer outline-none drop-shadow-md transition-colors active:bg-blue-700 hover:bg-blue-600 select-none bg-blue-500 text-white text-center md:text-xl text-lg font-bold rounded-xl px-3 py-2',
+                            disabled: bookWindow.isDisabled,
+                            class: `${
+                              bookWindow.isDisabled
+                                ? 'cursor-not-allowed bg-gray-500 active:bg-gray-700 hover:bg-gray-600'
+                                : 'cursor-pointer bg-blue-500 active:bg-blue-700 hover:bg-blue-600'
+                            } w-11/12 outline-none drop-shadow-md transition-colors select-none text-white text-center md:text-xl text-lg font-bold rounded-xl px-3 py-2`,
                             name: 'submitBoom',
                             type: 'submit',
                             value: 'Add'
