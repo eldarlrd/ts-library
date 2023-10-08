@@ -1,9 +1,10 @@
-import m, { VnodeDOM } from 'mithril';
-import { Header } from '@/components/header';
-import { Footer } from '@/components/footer';
-import bookOpen from '@/assets/book-open.svg';
+import m, { type VnodeDOM } from 'mithril';
+
 import bookClosed from '@/assets/book-closed.svg';
+import bookOpen from '@/assets/book-open.svg';
 import trash from '@/assets/trash.svg';
+import { Footer } from '@/components/footer.ts';
+import { Header } from '@/components/header.ts';
 import '@unocss/reset/tailwind.css';
 import 'virtual:uno.css';
 
@@ -31,9 +32,9 @@ const bookWindow: Modal = {
   checkOutside: target => {
     target !== null
       ? (
-          (<unknown>(
-            ((<unknown>target) as HTMLDivElement).closest('#modal')
-          )) as HTMLDivElement[]
+          (target as unknown as HTMLDivElement).closest(
+            '#modal'
+          ) as unknown as HTMLDivElement[]
         ).length
         ? null
         : bookWindow.toggleOpen()
@@ -69,73 +70,69 @@ const library: BookList = {
   title: '',
   author: '',
   pages: '',
-  addBook: e => {
-    if (e !== null) {
-      library.form = document.getElementsByTagName('form')[0];
-      const formData = new FormData(library.form as HTMLFormElement);
-      if (
-        !library.books.some(
-          book => book.title === Object.fromEntries(formData.entries()).title
-        )
-      ) {
-        library.books.push(Object.fromEntries(formData.entries()));
-        bookWindow.isOpen = false;
-        bookWindow.isDisabled = true;
-        (library.title = ''), (library.author = ''), (library.pages = '');
-        (document.getElementById('isRead') as HTMLInputElement).checked = false;
-        library.setLibrary();
-      } else alert('ERROR: Duplicates are not allowed!');
-    }
+  addBook: () => {
+    library.form = document.getElementsByTagName('form')[0];
+    const formData = new FormData(library.form as HTMLFormElement);
+    if (
+      !library.books.some(
+        book => book.title === Object.fromEntries(formData.entries()).title
+      )
+    ) {
+      library.books.push(Object.fromEntries(formData.entries()));
+      bookWindow.isOpen = false;
+      bookWindow.isDisabled = true;
+      (library.title = ''), (library.author = ''), (library.pages = '');
+      (document.getElementById('isRead') as HTMLInputElement).checked = false;
+      library.setLibrary();
+    } else alert('ERROR: Duplicates are not allowed!');
   },
   checkTitle: title => {
-    if (title) library.title = title;
+    if (title.trim()) library.title = title;
     else library.title = '';
     bookWindow.toggleDisabled();
   },
   checkAuthor: author => {
-    if (author) library.author = author;
+    if (author.trim()) library.author = author;
     else library.author = '';
     bookWindow.toggleDisabled();
   },
   checkPages: pages => {
-    if (pages !== null && +pages > 0 && +pages % 1 === 0) library.pages = pages;
+    if (+pages > 0 && +pages % 1 === 0) library.pages = pages;
     else library.pages = '';
     bookWindow.toggleDisabled();
   },
   removeBook: title => {
-    if (title !== null) {
-      const index = library.books.findIndex(book => {
-        return book.title === title;
-      });
-      library.books.splice(index, 1);
+    const index = library.books.findIndex(book => {
+      return book.title === title;
+    });
+    library.books.splice(index, 1);
+    library.setLibrary();
+  },
+  toggleRead: title => {
+    const index = library.books.findIndex(book => {
+      return book.title === title;
+    });
+    if (library.books[index].isRead) {
+      library.books[index].isRead = '';
+      library.setLibrary();
+    } else {
+      library.books[index].isRead = 'on';
       library.setLibrary();
     }
   },
-  toggleRead: title => {
-    if (title !== null) {
-      const index = library.books.findIndex(book => {
-        return book.title === title;
-      });
-      if (library.books[index].isRead) {
-        library.books[index].isRead = '';
-        library.setLibrary();
-      } else {
-        library.books[index].isRead = 'on';
-        library.setLibrary();
-      }
-    }
-  },
-  setLibrary: () => localStorage.setItem('books', JSON.stringify(library.books))
+  setLibrary: () => {
+    localStorage.setItem('books', JSON.stringify(library.books));
+  }
 };
 
 export const App = (): VirtualDOM => {
   return {
-    view: () =>
+    view: (): m.Vnode =>
       m(
         'div#app',
         {
           oncreate: localStorage.books
-            ? (library.books = JSON.parse(localStorage.books))
+            ? (library.books = JSON.parse(localStorage.books as string))
             : null,
           class:
             'flex items-center justify-around min-h-screen flex-col font-main bg-yellow-900 accent-blue-500'
@@ -205,7 +202,9 @@ export const App = (): VirtualDOM => {
                           m(
                             'button#read',
                             {
-                              onclick: () => library.toggleRead(item.title),
+                              onclick: () => {
+                                library.toggleRead(item.title);
+                              },
                               class: `${
                                 item.isRead === 'on'
                                   ? 'active:bg-green-700 hover:bg-green-600 bg-green-500'
@@ -228,7 +227,9 @@ export const App = (): VirtualDOM => {
                           m(
                             'button#remove',
                             {
-                              onclick: () => library.removeBook(item.title),
+                              onclick: () => {
+                                library.removeBook(item.title);
+                              },
                               class:
                                 'focus:outline drop-shadow-md transition-colors active:bg-red-700 hover:bg-red-600 select-none bg-red-500 text-white text-center sm:text-lg md:text-xl font-bold flex items-center justify-center gap-2 rounded-xl px-3 py-2 m-2'
                             },
@@ -260,7 +261,9 @@ export const App = (): VirtualDOM => {
                   m(
                     'section#modal',
                     {
-                      onclick: (e: Event) => bookWindow.checkOutside(e.target),
+                      onclick: (e: Event) => {
+                        bookWindow.checkOutside(e.target);
+                      },
                       class:
                         'scale-100 transition-transform flex flex-col items-center justify-center gap-6 rounded-xl bg-stone-200 drop-shadow-2xl max-h-full h-96 md:w-80'
                     },
@@ -274,17 +277,18 @@ export const App = (): VirtualDOM => {
                         'form',
                         {
                           oncreate: (e: VnodeDOM) => {
-                            library.form = ((<unknown>e) as Event).target;
+                            library.form = (e as unknown as Event).target;
                           },
                           class:
                             'flex flex-col items-center justify-center gap-6'
                         },
                         [
                           m('input#title', {
-                            oninput: (e: Event) =>
+                            oninput: (e: Event) => {
                               library.checkTitle(
                                 (e.target as HTMLInputElement).value
-                              ),
+                              );
+                            },
                             value: library.title,
                             min: 1,
                             class:
@@ -294,10 +298,11 @@ export const App = (): VirtualDOM => {
                             placeholder: 'Title'
                           }),
                           m('input#author', {
-                            oninput: (e: Event) =>
+                            oninput: (e: Event) => {
                               library.checkAuthor(
                                 (e.target as HTMLInputElement).value
-                              ),
+                              );
+                            },
                             value: library.author,
                             min: 1,
                             class:
@@ -307,10 +312,11 @@ export const App = (): VirtualDOM => {
                             placeholder: 'Author'
                           }),
                           m('input#pages', {
-                            oninput: (e: Event) =>
+                            oninput: (e: Event) => {
                               library.checkPages(
                                 (e.target as HTMLInputElement).value
-                              ),
+                              );
+                            },
                             value: library.pages,
                             class:
                               'px-3 py-2 focus:invalid:accent-red-500 rounded-xl w-11/12',
@@ -366,7 +372,5 @@ export const App = (): VirtualDOM => {
 };
 
 // Easter Egg
-console.log(
-  `"I'm quite illiterate, but I read a lot."
-- J. D. Salinger, The Catcher in the Rye`
-);
+console.log(`"I'm quite illiterate, but I read a lot."
+- J. D. Salinger, The Catcher in the Rye`);

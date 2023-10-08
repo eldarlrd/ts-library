@@ -1,9 +1,10 @@
 import m from 'mithril';
+
 import githubLogo from '@/assets/github.svg';
-const githubURL: string = 'https://github.com/eldarlrd';
+const githubURL = 'https://github.com/eldarlrd/ts-library';
 
 export const Footer = {
-  view: () =>
+  view: (): m.Vnode =>
     m(
       'footer',
       {
@@ -18,7 +19,7 @@ export const Footer = {
               'm-6 gap-1 font-bold flex select-none flex-col items-center justify-center text-center text-lg font-bold text-white drop-shadow-xl sm:text-xl md:text-2xl'
           },
           [
-            'by',
+            '© 2023',
             m(
               'a',
               {

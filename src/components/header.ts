@@ -1,7 +1,7 @@
 import m from 'mithril';
 
 export const Header = {
-  view: () =>
+  view: (): m.Vnode =>
     m(
       'header',
       {

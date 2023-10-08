@@ -1,0 +1,23 @@
+{
+  "name": "TypeScript Library",
+  "short_name": "Library",
+  "dir": "ltr",
+  "lang": "en",
+  "categories": [
+    "books",
+    "productivity"
+  ],
+  "display": "minimal-ui",
+  "orientation": "natural",
+  "theme_color": "#713f12",
+  "background_color": "#f8fafc",
+  "description": "A Personal Book Library",
+  "start_url": "https://eldarlrd.github.io/ts-library/",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
