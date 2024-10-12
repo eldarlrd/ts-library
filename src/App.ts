@@ -1,10 +1,10 @@
 import m, { type VnodeDOM } from 'mithril';
 
-import bookClosed from '@/assets/book-closed.svg';
-import bookOpen from '@/assets/book-open.svg';
-import trash from '@/assets/trash.svg';
-import { Footer } from '@/components/footer.ts';
-import { Header } from '@/components/header.ts';
+import bookClosed from '@/assets/images/bookClosed.svg';
+import bookOpen from '@/assets/images/bookOpen.svg';
+import trash from '@/assets/images/trash.svg';
+import { Footer } from '@/components/Footer.ts';
+import { Header } from '@/components/Header.ts';
 import '@unocss/reset/tailwind.css';
 import 'virtual:uno.css';
 
@@ -20,33 +20,11 @@ interface Modal {
   checkOutside: (target: EventTarget | null) => void;
 }
 
-const bookWindow: Modal = {
-  isOpen: false,
-  isDisabled: true,
-  toggleOpen: () => (bookWindow.isOpen = !bookWindow.isOpen),
-  toggleDisabled: () => {
-    if (!library.title || !library.author || !library.pages)
-      bookWindow.isDisabled = true;
-    else bookWindow.isDisabled = false;
-  },
-  checkOutside: target => {
-    target !== null
-      ? (
-          (target as unknown as HTMLDivElement).closest(
-            '#modal'
-          ) as unknown as HTMLDivElement[]
-        ).length
-        ? null
-        : bookWindow.toggleOpen()
-      : null;
-  }
-};
-
 interface BookDetails {
-  title?: string;
-  author?: string;
-  pages?: number;
-  isRead?: string;
+  title: string;
+  author: string;
+  pages: number;
+  isRead: string;
 }
 
 interface BookList {
@@ -64,6 +42,28 @@ interface BookList {
   setLibrary: () => void;
 }
 
+const bookWindow: Modal = {
+  isOpen: false,
+  isDisabled: true,
+
+  toggleOpen: () => (bookWindow.isOpen = !bookWindow.isOpen),
+  toggleDisabled: () => {
+    if (!library.title || !library.author || !library.pages)
+      bookWindow.isDisabled = true;
+    else bookWindow.isDisabled = false;
+  },
+
+  checkOutside: target => {
+    if (target) {
+      const closestModal = (target as unknown as HTMLDivElement).closest(
+        '#modal'
+      ) as unknown as HTMLDivElement[];
+
+      if (!closestModal.length) bookWindow.toggleOpen();
+    }
+  }
+};
+
 const library: BookList = {
   form: new EventTarget(),
   books: [],
@@ -78,29 +78,39 @@ const library: BookList = {
         book => book.title === Object.fromEntries(formData.entries()).title
       )
     ) {
-      library.books.push(Object.fromEntries(formData.entries()));
+      library.books.push(
+        Object.fromEntries(formData.entries()) as unknown as BookDetails
+      );
+
       bookWindow.isOpen = false;
       bookWindow.isDisabled = true;
-      (library.title = ''), (library.author = ''), (library.pages = '');
+      library.title = '';
+      library.author = '';
+      library.pages = '';
+
       (document.getElementById('isRead') as HTMLInputElement).checked = false;
       library.setLibrary();
-    } else alert('ERROR: Duplicates are not allowed!');
+    } else alert('ERROR: Book already in library!');
   },
+
   checkTitle: title => {
     if (title.trim()) library.title = title;
     else library.title = '';
     bookWindow.toggleDisabled();
   },
+
   checkAuthor: author => {
     if (author.trim()) library.author = author;
     else library.author = '';
     bookWindow.toggleDisabled();
   },
+
   checkPages: pages => {
     if (+pages > 0 && +pages % 1 === 0) library.pages = pages;
     else library.pages = '';
     bookWindow.toggleDisabled();
   },
+
   removeBook: title => {
     const index = library.books.findIndex(book => {
       return book.title === title;
@@ -108,10 +118,12 @@ const library: BookList = {
     library.books.splice(index, 1);
     library.setLibrary();
   },
+
   toggleRead: title => {
     const index = library.books.findIndex(book => {
       return book.title === title;
     });
+
     if (library.books[index].isRead) {
       library.books[index].isRead = '';
       library.setLibrary();
@@ -120,6 +132,7 @@ const library: BookList = {
       library.setLibrary();
     }
   },
+
   setLibrary: () => {
     localStorage.setItem('books', JSON.stringify(library.books));
   }
@@ -131,9 +144,12 @@ export const App = (): VirtualDOM => {
       m(
         'div#app',
         {
-          oncreate: localStorage.books
-            ? (library.books = JSON.parse(localStorage.books as string))
-            : null,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          oncreate:
+            localStorage.books &&
+            (library.books = JSON.parse(
+              localStorage.books as string
+            ) as BookDetails[]),
           class:
             'flex items-center justify-around min-h-screen flex-col font-main bg-yellow-900 accent-blue-500'
         },
@@ -192,11 +208,9 @@ export const App = (): VirtualDOM => {
                             class:
                               'grow m-2 text-center sm:text-lg md:text-xl hyphens-auto'
                           },
-                          item.pages !== undefined
-                            ? +item.pages === 1
-                              ? `${item.pages} Page`
-                              : `${item.pages} Pages`
-                            : ''
+                          +item.pages === 1 ?
+                            `${item.pages.toString()} Page`
+                          : `${item.pages.toString()} Pages`
                         ),
                         m('span', { class: 'flex flex-col w-11/12 mb-2' }, [
                           m(
@@ -206,18 +220,18 @@ export const App = (): VirtualDOM => {
                                 library.toggleRead(item.title);
                               },
                               class: `${
-                                item.isRead === 'on'
-                                  ? 'active:bg-green-700 hover:bg-green-600 bg-green-500'
-                                  : 'active:bg-amber-700 hover:bg-amber-600 bg-amber-500'
+                                item.isRead === 'on' ?
+                                  'active:bg-green-700 hover:bg-green-600 bg-green-500'
+                                : 'active:bg-amber-700 hover:bg-amber-600 bg-amber-500'
                               } focus:outline drop-shadow-md transition-colors select-none text-white text-center sm:text-lg md:text-xl flex items-center justify-center gap-2 font-bold rounded-xl px-3 py-2 m-2`
                             },
                             [
                               m('img', {
                                 class: 'h-4 w-4 md:h-5 md:w-5',
                                 alt:
-                                  item.isRead === 'on'
-                                    ? 'Closed Book'
-                                    : 'Open Book',
+                                  item.isRead === 'on' ?
+                                    'Closed Book'
+                                  : 'Open Book',
                                 src:
                                   item.isRead === 'on' ? bookClosed : bookOpen
                               }),
@@ -253,8 +267,9 @@ export const App = (): VirtualDOM => {
                 'div#overlay',
                 {
                   onclick: bookWindow.toggleOpen,
-                  class: bookWindow.isOpen
-                    ? 'fixed inset-0 z-20 flex h-full w-full items-center justify-center bg-black/75'
+                  class:
+                    bookWindow.isOpen ?
+                      'fixed inset-0 z-20 flex h-full w-full items-center justify-center bg-black/75'
                     : 'hidden'
                 },
                 [
@@ -349,9 +364,9 @@ export const App = (): VirtualDOM => {
                             },
                             disabled: bookWindow.isDisabled,
                             class: `${
-                              bookWindow.isDisabled
-                                ? 'cursor-not-allowed bg-gray-500 active:bg-gray-700 hover:bg-gray-600'
-                                : 'cursor-pointer bg-blue-500 active:bg-blue-700 hover:bg-blue-600'
+                              bookWindow.isDisabled ?
+                                'cursor-not-allowed bg-gray-500'
+                              : 'cursor-pointer bg-blue-500 active:bg-blue-700 hover:bg-blue-600'
                             } w-11/12 focus:outline drop-shadow-md transition-colors select-none text-white text-center md:text-xl text-lg font-bold rounded-xl px-3 py-2`,
                             name: 'submitBoom',
                             type: 'submit',

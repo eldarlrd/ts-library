@@ -13,9 +13,7 @@ export default defineConfig({
     })
   ],
   content: {
-    pipeline: {
-      include: ['src/**/*.ts']
-    }
+    pipeline: { include: ['src/**/*.ts'] }
   },
   theme: {
     boxShadow: {

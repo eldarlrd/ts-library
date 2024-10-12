@@ -1,18 +1,18 @@
-# TypeScript Library
+# TS Library
 [![Version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/eldarlrd/ts-library/main/package.json&query=version&logo=git-extensions&label=version&labelColor=475569&color=0284c7)](https://github.com/eldarlrd/ts-library/blob/main/package.json)
 [![License](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/eldarlrd/ts-library/main/package.json&query=license&logo=open-source-initiative&logoColor=fff&label=license&labelColor=475569&color=c026d3)](https://github.com/eldarlrd/ts-library/blob/main/LICENSE)
 
-> TypeScript Library is a website built with
+> TS Library is a website built with
 > - **[Mithril](https://mithril.js.org)**
 > - **[TypeScript](https://typescriptlang.org)**
 > - **[UnoCSS](https://unocss.dev)**
-> - **[Vite](https://vitejs.dev)**
+> - **[Vite](https://vite.dev)**
 >
 > that stores information about books read by the user.
 
 ## Install
 ```sh
-yarn install
+yarn
 ```
 ## Develop
 ### Run Env.

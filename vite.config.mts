@@ -5,7 +5,5 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   base: '/ts-library/',
   plugins: [UnoCSS()],
-  resolve: {
-    alias: { '@': '/src' }
-  }
+  resolve: { alias: { '@': '/src' } }
 });
